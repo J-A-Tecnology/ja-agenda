@@ -232,7 +232,7 @@
         .btn-aba:hover, .btn-aba.ativa { background: #4a5568; color: white; border-left: 4px solid #319795; }
         .badge-contador { background: #e53e3e; color: white; font-size: 0.8rem; padding: 2px 7px; border-radius: 10px; }
 
-        /* MODAIS */
+        /* MODAIS - Corrigido o display padrão para none */
         .janela-conteudo { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 900; }
         .janela-conteudo.visivel { display: block; }
         
@@ -270,4 +270,135 @@
         .btn-deletar-nota { background: transparent; border: none; color: #a0aec0; cursor: pointer; font-size: 0.9rem; padding: 0; }
         .btn-deletar-nota:hover { color: #e53e3e; }
 
-        .notas-editor { flex: 1; display: flex; flex-Sem resposta
+        .notas-editor { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .notas-editor input { padding: 12px; font-size: 1.2rem; font-weight: bold; border: 1px solid #e2e8f0; border-radius: 6px; }
+        .notas-editor textarea { flex: 1; padding: 12px; font-size: 1rem; border: 1px solid #e2e8f0; border-radius: 6px; resize: none; }
+    </style>
+</head>
+<body>
+
+    <div id="menuLateral" class="sidebar-menu">
+        <div class="sidebar-titulo">
+            <h2>Navegação</h2>
+            <button class="btn-fechar-menu" onclick="toggleMenu()">✕</button>
+        </div>
+        <div class="lista-abas">
+            <button class="btn-aba ativa">Agenda Geral</button>
+            <button class="btn-aba" onclick="toggleModal('modalNotas')">Bloco de Notas <span class="badge-contador">3</span></button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="cabecalho-menu">
+            <div class="cabecalho-esquerda">
+                <button class="btn-hamburguer" onclick="toggleMenu()">☰</button>
+                <h1>Meu Gerenciador de Tempo e Notas</h1>
+            </div>
+            <div class="cabecalho-direita-relogio">
+                <div class="relogio-tempo" id="relogio">12:00:00</div>
+                <div class="relogio-meta">Foco Total</div>
+            </div>
+        </div>
+
+        <div class="bloco-navegacao-agenda">
+            <div class="dia-da-semana-topo">Quinta-feira</div>
+            <div class="navegador-datas">
+                <button class="btn-seta">◀</button>
+                <p class="data-atual">21 de Maio de 2026</p>
+                <button class="btn-seta">▶</button>
+            </div>
+        </div>
+
+        <div class="formulario">
+            <h2>Nova Tarefa</h2>
+            <div class="grupo-campo">
+                <label>Título da Tarefa</label>
+                <input type="text" placeholder="Ex: Estudar Banco de Dados">
+            </div>
+            <div class="linha-campos">
+                <div class="grupo-campo">
+                    <label>Horário</label>
+                    <input type="time">
+                </div>
+                <div class="grupo-campo">
+                    <label>Tipo</label>
+                    <select>
+                        <option>Pontual</option>
+                        <option>Fixa</option>
+                    </select>
+                </div>
+                <label class="switch-notificacao">
+                    <input type="checkbox"> Notificar-me
+                </label>
+            </div>
+            <button class="btn-adicionar">Adicionar à Agenda</button>
+        </div>
+
+        <div class="lista-tarefas">
+            <div class="tarefa-card">
+                <div class="tarefa-info">
+                    <div class="tarefa-horario">14:00 <span class="badge-notif">Sino</span></div>
+                    <h3>Reunião de Alinhamento</h3>
+                    <span class="badge-tipo badge-pontual">Pontual</span>
+                </div>
+                <div class="acoes-tarefa">
+                    <button class="btn-status pendente">Pendente</button>
+                    <button class="btn-excluir">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalNotas" class="janela-conteudo">
+        <div class="janela-corpo">
+            <h2>
+                <span>Bloco de Notas</span>
+                <button class="btn-fechar-menu" style="color: #333;" onclick="toggleModal('modalNotas')">✕</button>
+            </h2>
+            <div class="bloco-layout">
+                <div class="notas-lateral">
+                    <button class="btn-criar-nota">+ Nova Nota</button>
+                    <div class="lista-mini-notas">
+                        <div class="mini-nota-card selecionada">
+                            <div class="mini-nota-topo">
+                                <h4>Ideias de Projeto</h4>
+                                <button class="btn-deletar-nota">🗑</button>
+                            </div>
+                            <div class="mini-nota-data">21/05/2026</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notas-editor">
+                    <input type="text" value="Ideias de Projeto">
+                    <textarea placeholder="Comece a escrever suas notas aqui..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Abrir e fechar Menu Lateral
+        function toggleMenu() {
+            const menu = document.getElementById('menuLateral');
+            menu.classList.toggle('aberta');
+        }
+
+        // Abrir e fechar Janelas Modais (Como o bloco de notas)
+        function toggleModal(idModal) {
+            const modal = document.getElementById(idModal);
+            modal.classList.toggle('visivel');
+        }
+
+        // Relógio Atualizável simples
+        function atualizarRelogio() {
+            const agora = new Date();
+            const horas = String(agora.getHours()).padStart(2, '0');
+            const minutos = String(agora.getMinutes()).padStart(2, '0');
+            const segundos = String(agora.getSeconds()).padStart(2, '0');
+            document.getElementById('relogio').textContent = `${horas}:${minutos}:${segundos}`;
+        }
+        setInterval(atualizarRelogio, 1000);
+        atualizarRelogio();
+    </script>
+</body>
+</html>
