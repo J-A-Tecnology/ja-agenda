@@ -285,6 +285,7 @@
             display: flex;
             justify-content: center;
             margin: 25px 0;
+            min-height: 40px;
         }
         .usuario-perfil {
             display: flex;
@@ -312,14 +313,13 @@
             
             <div class="btn-google-container">
                 <div id="g_id_onload"
-                    data-client_id="884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com"
                     data-context="signin"
                     data-ux_mode="popup"
                     data-callback="handleCredentialResponse"
                     data-auto_prompt="false">
                 </div>
 
-                <div class="g_id_signin"
+                <div id="wrapper_g_id_signin" class="g_id_signin"
                     data-type="standard"
                     data-shape="rounded"
                     data-theme="outline"
@@ -436,6 +436,15 @@
     </div>
 
     <script>
+        // Injeção Automática e Segura das Credenciais
+        window.addEventListener('DOMContentLoaded', () => {
+            const googleLoader = document.getElementById('g_id_onload');
+            if (googleLoader) {
+                // Injeta dinamicamente seu Client ID correto obtido no painel
+                googleLoader.setAttribute('data-client_id', '884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com');
+            }
+        });
+
         function toggleMenu() {
             document.getElementById('menuLateral').classList.toggle('aberta');
         }
