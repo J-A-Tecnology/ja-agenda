@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Gerenciador de Tempo e Notas</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // SUA CONFIGURAÇÃO DO FIREBASE COLOCADA AQUI COM SUCESSO:
+        const firebaseConfig = {
+            apiKey: "AIzaSyAH9G--qdODpxlYCgRtE5cd5WSsWxBRm_I",
+            authDomain: "ja-agenda-3488c.firebaseapp.com",
+            projectId: "ja-agenda-3488c",
+            storageBucket: "ja-agenda-3488c.firebasestorage.app",
+            messagingSenderId: "884588851940",
+            appId: "1:884588851940:web:c1c4bf96074ea0ca16f2f1",
+            measurementId: "G-X6VWD643FT"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.dbNode = { doc, setDoc, getDoc, db };
+    </script>
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,9 +34,7 @@
             margin: 0;
             padding: 20px;
             color: #333;
-            transition: padding-left 0.3s ease;
         }
-        
         .container {
             width: 100%;
             max-width: 100%;
@@ -23,7 +44,6 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-
         .cabecalho-menu {
             display: flex;
             justify-content: space-between;
@@ -32,20 +52,17 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        
         .cabecalho-esquerda {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-
         .cabecalho-direita-relogio {
             text-align: right;
             background: #2d3748;
             color: #fff;
             padding: 8px 16px;
             border-radius: 8px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
             min-width: 150px;
         }
         .relogio-tempo {
@@ -53,44 +70,8 @@
             font-weight: bold;
             font-family: monospace;
             color: #63b3ed;
-            line-height: 1.2;
         }
-        .relogio-meta {
-            font-size: 0.75rem;
-            color: #a0aec0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-hamburguer {
-            background: #4a5568;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            font-size: 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            line-height: 1;
-            transition: background 0.2s;
-        }
-        .btn-hamburguer:hover { background: #2d3748; }
-
         h1 { margin: 0; color: #4a5568; font-size: 1.8rem; }
-        
-        .bloco-navegacao-agenda {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 30px;
-        }
-        .dia-da-semana-topo {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #4a5568;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-            padding-left: 5px;
-        }
         .navegador-datas {
             display: flex;
             justify-content: space-between;
@@ -98,11 +79,10 @@
             background: #edf2f7;
             padding: 10px 20px;
             border-radius: 8px;
+            margin-bottom: 30px;
         }
-        .btn-seta { background: #3182ce; color: white; border: none; padding: 8px 15px; font-size: 1.1rem; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        .btn-seta:hover { background: #2b6cb0; }
+        .btn-seta { background: #3182ce; color: white; border: none; padding: 8px 15px; font-weight: bold; border-radius: 6px; cursor: pointer; }
         .data-atual { color: #2d3748; font-size: 1.2rem; font-weight: bold; margin: 0; }
-
         .formulario {
             background: #f7fafc;
             border: 1px solid #e2e8f0;
@@ -113,48 +93,10 @@
             flex-direction: column;
             gap: 12px;
         }
-        .formulario h2 { margin: 0 0 10px 0; font-size: 1.2rem; color: #2d3748; }
-        .grupo-campo { display: flex; flex-direction: column; gap: 5px; }
-        .grupo-campo label { font-size: 0.9rem; font-weight: bold; color: #4a5568; }
-        .formulario input, .formulario select, .formulario textarea { padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; font-family: inherit; box-sizing: border-box; }
-        
-        .linha-campos {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        .linha-campos .grupo-campo {
-            flex: 1;
-            min-width: 150px;
-        }
-        
-        .switch-notificacao {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px;
-            background: #edf2f7;
-            border-radius: 6px;
-            cursor: pointer;
-            user-select: none;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #4a5568;
-            min-width: 160px;
-            height: 42px;
-            box-sizing: border-box;
-        }
-        .switch-notificacao input {
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-            margin: 0;
-        }
-
-        .btn-adicionar { background: #319795; color: white; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; }
-        .btn-adicionar:hover { background: #2c7a7b; }
-
+        .formulario input, .formulario select { padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; }
+        .linha-campos { display: flex; gap: 15px; flex-wrap: wrap; }
+        .grupo-campo { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 150px; }
+        .btn-adicionar { background: #319795; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
         .lista-tarefas { display: flex; flex-direction: column; gap: 15px; }
         .tarefa-card {
             display: flex;
@@ -165,240 +107,192 @@
             border-left: 5px solid #3182ce;
             border-radius: 6px;
         }
-        .tarefa-card.fixa { border-left-color: #319795; }
-        .tarefa-card.feita { border-left-color: #a0aec0; background: #edf2f7; opacity: 0.7; }
-        .tarefa-card.feita h3 { text-decoration: line-through; color: #718096; }
-        
-        .tarefa-info h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
-        .tarefa-horario { font-size: 0.9rem; color: #4a5568; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-weight: 500; }
-        .badge-notif { background: #e53e3e; color: white; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        
-        .tarefa-info span.badge-tipo { font-size: 0.85rem; padding: 3px 8px; border-radius: 20px; color: white; }
-        .badge-pontual { background-color: #3182ce; }
-        .badge-fixa { background-color: #319795; }
-        
-        .acoes-tarefa { display: flex; align-items: center; gap: 10px; }
-        .btn-status { border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-status.pendente { color: #e53e3e; background: #fff5f5; }
-        .btn-status.concluida { color: #38a169; background: #f0fff4; }
+        .acoes-tarefa { display: flex; gap: 10px; }
         .btn-excluir { background: #e53e3e; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
-
-        /* MENU LATERAL */
-        .sidebar-menu {
-            position: fixed;
-            top: 0;
-            left: -320px;
-            width: 290px;
-            height: 100%;
-            background: #1a202c;
-            color: white;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
-            transition: left 0.3s ease;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar-menu.aberta { left: 0; }
-        
-        .sidebar-titulo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #4a5568;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .sidebar-titulo h2 { margin: 0; font-size: 1.3rem; color: #e2e8f0; }
-        .btn-fechar-menu { background: transparent; border: none; color: #a0aec0; font-size: 1.3rem; cursor: pointer; }
-        
-        .lista-abas { display: flex; flex-direction: column; gap: 10px; }
-        .btn-aba {
-            background: #2d3748;
-            color: #e2e8f0;
-            border: none;
-            padding: 12px 15px;
-            border-radius: 6px;
-            text-align: left;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn-aba:hover, .btn-aba.ativa { background: #4a5568; color: white; border-left: 4px solid #319795; }
-        .badge-contador { background: #e53e3e; color: white; font-size: 0.8rem; padding: 2px 7px; border-radius: 10px; }
-
-        /* MODAIS - Corrigido o display padrão para none */
         .janela-conteudo { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 900; }
         .janela-conteudo.visivel { display: block; }
-        
         .janela-corpo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            color: #333;
-            width: 95%;
-            max-width: 850px;
-            height: 85vh;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; width: 95%; max-width: 400px; padding: 25px; border-radius: 12px; text-align: center;
         }
-        .janela-corpo h2 { margin-top: 0; color: #2d3748; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; }
-        
-        .bloco-layout { display: flex; flex: 1; gap: 20px; overflow: hidden; }
-        .notas-lateral { width: 250px; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; padding-right: 15px; overflow-y: auto; }
-        .btn-criar-nota { background: #3182ce; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; text-align: center; }
-        .btn-criar-nota:hover { background: #2b6cb0; }
-        
-        .lista-mini-notas { display: flex; flex-direction: column; gap: 8px; }
-        .mini-nota-card { padding: 10px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: all 0.2s; }
-        .mini-nota-card:hover { background: #edf2f7; }
-        .mini-nota-card.selecionada { background: #e2e8f0; border-color: #cbd5e0; }
-        .mini-nota-topo { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .mini-nota-card h4 { margin: 0; font-size: 0.95rem; color: #2d3748; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
-        .mini-nota-data { font-size: 0.75rem; color: #718096; font-style: italic; }
-        .btn-deletar-nota { background: transparent; border: none; color: #a0aec0; cursor: pointer; font-size: 0.9rem; padding: 0; }
-        .btn-deletar-nota:hover { color: #e53e3e; }
-
-        .notas-editor { flex: 1; display: flex; flex-direction: column; gap: 15px; }
-        .notas-editor input { padding: 12px; font-size: 1.2rem; font-weight: bold; border: 1px solid #e2e8f0; border-radius: 6px; }
-        .notas-editor textarea { flex: 1; padding: 12px; font-size: 1rem; border: 1px solid #e2e8f0; border-radius: 6px; resize: none; }
+        .usuario-perfil { display: flex; align-items: center; gap: 10px; background: #4a5568; padding: 5px 12px; border-radius: 20px; color: white; }
+        .usuario-perfil img { width: 25px; height: 25px; border-radius: 50%; }
+        .btn-google-container { display: flex; justify-content: center; margin: 20px 0; }
     </style>
 </head>
 <body>
 
-    <div id="menuLateral" class="sidebar-menu">
-        <div class="sidebar-titulo">
-            <h2>Navegação</h2>
-            <button class="btn-fechar-menu" onclick="toggleMenu()">✕</button>
-        </div>
-        <div class="lista-abas">
-            <button class="btn-aba ativa">Agenda Geral</button>
-            <button class="btn-aba" onclick="toggleModal('modalNotas')">Bloco de Notas <span class="badge-contador">3</span></button>
+    <div id="modalLogin" class="janela-conteudo visivel">
+        <div class="janela-corpo">
+            <h2>Acessar a Agenda</h2>
+            <p>Faça login com o Google para sincronizar seus dados entre o computador e o celular.</p>
+            <div class="btn-google-container">
+                <div id="g_id_onload"
+                    data-client_id="884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="handleCredentialResponse"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-shape="rounded" data-theme="outline" data-size="large"></div>
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div class="cabecalho-menu">
             <div class="cabecalho-esquerda">
-                <button class="btn-hamburguer" onclick="toggleMenu()">☰</button>
-                <h1>Meu Gerenciador de Tempo e Notas</h1>
+                <h1>Minha Agenda Nuvem</h1>
             </div>
-            <div class="cabecalho-direita-relogio">
-                <div class="relogio-tempo" id="relogio">12:00:00</div>
-                <div class="relogio-meta">Foco Total</div>
+            <div class="cabecalho-esquerda" id="areaUsuario">
+                <div class="cabecalho-direita-relogio"><div class="relogio-tempo" id="relogio">00:00:00</div></div>
             </div>
         </div>
 
-        <div class="bloco-navegacao-agenda">
-            <div class="dia-da-semana-topo">Quinta-feira</div>
-            <div class="navegador-datas">
-                <button class="btn-seta">◀</button>
-                <p class="data-atual">21 de Maio de 2026</p>
-                <button class="btn-seta">▶</button>
-            </div>
+        <div class="navegador-datas">
+            <button class="btn-seta">◀</button>
+            <p class="data-atual">Agenda Sincronizada</p>
+            <button class="btn-seta">▶</button>
         </div>
 
         <div class="formulario">
             <h2>Nova Tarefa</h2>
             <div class="grupo-campo">
                 <label>Título da Tarefa</label>
-                <input type="text" placeholder="Ex: Estudar Banco de Dados">
+                <input type="text" id="txtTarefa" placeholder="Ex: Estudar Banco de Dados">
             </div>
             <div class="linha-campos">
                 <div class="grupo-campo">
                     <label>Horário</label>
-                    <input type="time">
+                    <input type="time" id="txtHora">
                 </div>
                 <div class="grupo-campo">
                     <label>Tipo</label>
-                    <select>
+                    <select id="txtTipo">
                         <option>Pontual</option>
                         <option>Fixa</option>
                     </select>
                 </div>
-                <label class="switch-notificacao">
-                    <input type="checkbox"> Notificar-me
-                </label>
             </div>
-            <button class="btn-adicionar">Adicionar à Agenda</button>
+            <button class="btn-adicionar" onclick="adicionarTarefa()">Adicionar e Salvar na Nuvem</button>
         </div>
 
-        <div class="lista-tarefas">
-            <div class="tarefa-card">
-                <div class="tarefa-info">
-                    <div class="tarefa-horario">14:00 <span class="badge-notif">Sino</span></div>
-                    <h3>Reunião de Alinhamento</h3>
-                    <span class="badge-tipo badge-pontual">Pontual</span>
-                </div>
-                <div class="acoes-tarefa">
-                    <button class="btn-status pendente">Pendente</button>
-                    <button class="btn-excluir">Excluir</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalNotas" class="janela-conteudo">
-        <div class="janela-corpo">
-            <h2>
-                <span>Bloco de Notas</span>
-                <button class="btn-fechar-menu" style="color: #333;" onclick="toggleModal('modalNotas')">✕</button>
-            </h2>
-            <div class="bloco-layout">
-                <div class="notas-lateral">
-                    <button class="btn-criar-nota">+ Nova Nota</button>
-                    <div class="lista-mini-notas">
-                        <div class="mini-nota-card selecionada">
-                            <div class="mini-nota-topo">
-                                <h4>Ideias de Projeto</h4>
-                                <button class="btn-deletar-nota">🗑</button>
-                            </div>
-                            <div class="mini-nota-data">21/05/2026</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="notas-editor">
-                    <input type="text" value="Ideias de Projeto">
-                    <textarea placeholder="Comece a escrever suas notas aqui..."></textarea>
-                </div>
-            </div>
-        </div>
+        <div class="lista-tarefas" id="containerTarefas"></div>
     </div>
 
     <script>
-        // Abrir e fechar Menu Lateral
-        function toggleMenu() {
-            const menu = document.getElementById('menuLateral');
-            menu.classList.toggle('aberta');
-        }
+        let usuarioLogado = null;
+        let tarefasDoUsuario = [];
 
-        // Abrir e fechar Janelas Modais (Como o bloco de notas)
-        function toggleModal(idModal) {
-            const modal = document.getElementById(idModal);
-            modal.classList.toggle('visivel');
-        }
-
-        // Relógio Atualizável simples
         function atualizarRelogio() {
             const agora = new Date();
-            const horas = String(agora.getHours()).padStart(2, '0');
-            const minutos = String(agora.getMinutes()).padStart(2, '0');
-            const segundos = String(agora.getSeconds()).padStart(2, '0');
-            document.getElementById('relogio').textContent = `${horas}:${minutos}:${segundos}`;
+            document.getElementById('relogio').textContent = agora.toLocaleTimeString('pt-BR');
         }
         setInterval(atualizarRelogio, 1000);
-        atualizarRelogio();
+
+        // --- INTEGRAÇÃO DO LOGIN COM BANCO DE DADOS ---
+        async function handleCredentialResponse(response) {
+            const perfil = parseJwt(response.credential);
+            usuarioLogado = perfil.email;
+
+            document.getElementById('modalLogin').classList.remove('visivel');
+            
+            const area = document.getElementById('areaUsuario');
+            area.insertAdjacentHTML('afterbegin', `
+                <div class="usuario-perfil">
+                    <img src="${perfil.picture}" referrerpolicy="no-referrer">
+                    <span>Olá, ${perfil.given_name}</span>
+                </div>
+            `);
+
+            await carregarDadosDaNuvem();
+        }
+
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+        }
+
+        // --- SALVAR E CARREGAR DA NUVEM ---
+        async function carregarDadosDaNuvem() {
+            if (!usuarioLogado) return;
+            try {
+                const docRef = window.dbNode.doc(window.dbNode.db, "agendas", usuarioLogado);
+                const docSnap = await window.dbNode.getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    tarefasDoUsuario = docSnap.data().tarefas || [];
+                } else {
+                    const localBackup = localStorage.getItem(`backup_${usuarioLogado}`);
+                    tarefasDoUsuario = localBackup ? JSON.parse(localBackup) : [];
+                }
+            } catch (e) {
+                const localBackup = localStorage.getItem(`backup_${usuarioLogado}`);
+                tarefasDoUsuario = localBackup ? JSON.parse(localBackup) : [];
+            }
+            renderizarTarefas();
+        }
+
+        async function salvarDadosNaNuvem() {
+            if (!usuarioLogado) return;
+            localStorage.setItem(`backup_${usuarioLogado}`, JSON.stringify(tarefasDoUsuario));
+
+            try {
+                const docRef = window.dbNode.doc(window.dbNode.db, "agendas", usuarioLogado);
+                await window.dbNode.setDoc(docRef, { tarefas: tarefasDoUsuario });
+            } catch (e) {
+                console.log("Erro ao salvar, dados guardados em cache local...");
+            }
+        }
+
+        function adicionarTarefa() {
+            const titulo = document.getElementById('txtTarefa').value;
+            const hora = document.getElementById('txtHora').value;
+            const tipo = document.getElementById('txtTipo').value;
+
+            if (!titulo || !hora) {
+                alert("Por favor, preencha todos os campos!");
+                return;
+            }
+
+            const nova = { id: Date.now(), titulo, hora, tipo };
+            tarefasDoUsuario.push(nova);
+            document.getElementById('txtTarefa').value = "";
+            
+            renderizarTarefas();
+            salvarDadosNaNuvem();
+        }
+
+        function excluirTarefa(id) {
+            tarefasDoUsuario = tarefasDoUsuario.filter(t => t.id !== id);
+            renderizarTarefas();
+            salvarDadosNaNuvem();
+        }
+
+        function renderizarTarefas() {
+            const container = document.getElementById('containerTarefas');
+            container.innerHTML = "";
+
+            if (tarefasDoUsuario.length === 0) {
+                container.innerHTML = `<p style="color:#a0aec0; text-align:center;">Nenhuma tarefa agendada.</p>`;
+                return;
+            }
+
+            tarefasDoUsuario.forEach(t => {
+                container.innerHTML += `
+                    <div class="tarefa-card">
+                        <div>
+                            <strong style="font-size:1.1rem; display:block;">${t.titulo}</strong>
+                            <small style="color:#718096;">${t.hora} - ${t.tipo}</small>
+                        </div>
+                        <div class="acoes-tarefa">
+                            <button class="btn-excluir" onclick="excluirTarefa(${t.id})">Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
     </script>
 </body>
 </html>
