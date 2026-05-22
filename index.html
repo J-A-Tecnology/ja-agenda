@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Agenda</title>
     
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" defer></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -132,25 +132,36 @@
     <div class="no-tasks">Nenhuma tarefa marcada para este dia.</div>
 
     <script>
-        window.addEventListener('load', function () {
-            startClock();
+        // Função de inicialização do Google estruturada com segurança máxima
+        function iniciarGoogleAuth() {
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                google.accounts.id.initialize({
+                    client_id: "884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com", 
+                    callback: handleCredentialResponse
+                });
 
-            // Ativação da biblioteca com o seu ID real do Google Cloud
-            google.accounts.id.initialize({
-                client_id: "884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com", 
-                callback: handleCredentialResponse
-            });
-
-            // Força o Google a renderizar (desenhar) o botão dentro da div buttonDiv
-            google.accounts.id.renderButton(
-                document.getElementById("buttonDiv"),
-                { 
-                    theme: "outline", 
-                    size: "medium", 
-                    text: "signin_with",
-                    shape: "rectangular"
+                const targetDiv = document.getElementById("buttonDiv");
+                if (targetDiv) {
+                    google.accounts.id.renderButton(
+                        targetDiv,
+                        { 
+                            theme: "outline", 
+                            size: "medium", 
+                            text: "signin_with",
+                            shape: "rectangular"
+                        }
+                    );
                 }
-            );
+            } else {
+                // Se a biblioteca demorar um pouquinho a carregar, tenta de novo em 300ms
+                setTimeout(iniciarGoogleAuth, 300);
+            }
+        }
+
+        // Aguarda a árvore HTML estar 100% montada na tela antes de rodar os scripts
+        document.addEventListener('DOMContentLoaded', function () {
+            startClock();
+            iniciarGoogleAuth();
         });
 
         function handleCredentialResponse(response) {
