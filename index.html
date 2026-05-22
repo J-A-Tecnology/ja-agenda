@@ -3,296 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Gerenciador de Tempo e Notas</title>
+    <title>Minha Agenda</title>
+    
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // SUA CONFIGURAÇÃO DO FIREBASE COLOCADA AQUI COM SUCESSO:
-        const firebaseConfig = {
-            apiKey: "AIzaSyAH9G--qdODpxlYCgRtE5cd5WSsWxBRm_I",
-            authDomain: "ja-agenda-3488c.firebaseapp.com",
-            projectId: "ja-agenda-3488c",
-            storageBucket: "ja-agenda-3488c.firebasestorage.app",
-            messagingSenderId: "884588851940",
-            appId: "1:884588851940:web:c1c4bf96074ea0ca16f2f1",
-            measurementId: "G-X6VWD643FT"
-        };
-
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        window.dbNode = { doc, setDoc, getDoc, db };
-    </script>
-
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .cabecalho-menu {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .cabecalho-esquerda {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .cabecalho-direita-relogio {
-            text-align: right;
-            background: #2d3748;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            min-width: 150px;
-        }
-        .relogio-tempo {
-            font-size: 1.4rem;
-            font-weight: bold;
-            font-family: monospace;
-            color: #63b3ed;
-        }
-        h1 { margin: 0; color: #4a5568; font-size: 1.8rem; }
-        .navegador-datas {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #edf2f7;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .btn-seta { background: #3182ce; color: white; border: none; padding: 8px 15px; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        .data-atual { color: #2d3748; font-size: 1.2rem; font-weight: bold; margin: 0; }
-        .formulario {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .formulario input, .formulario select { padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; }
-        .linha-campos { display: flex; gap: 15px; flex-wrap: wrap; }
-        .grupo-campo { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 150px; }
-        .btn-adicionar { background: #319795; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        .lista-tarefas { display: flex; flex-direction: column; gap: 15px; }
-        .tarefa-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: #f8fafc;
-            border-left: 5px solid #3182ce;
-            border-radius: 6px;
-        }
-        .acoes-tarefa { display: flex; gap: 10px; }
-        .btn-excluir { background: #e53e3e; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
-        .janela-conteudo { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 900; }
-        .janela-conteudo.visivel { display: block; }
-        .janela-corpo {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; width: 95%; max-width: 400px; padding: 25px; border-radius: 12px; text-align: center;
-        }
-        .usuario-perfil { display: flex; align-items: center; gap: 10px; background: #4a5568; padding: 5px 12px; border-radius: 20px; color: white; }
-        .usuario-perfil img { width: 25px; height: 25px; border-radius: 50%; }
-        .btn-google-container { display: flex; justify-content: center; margin: 20px 0; }
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; color: #333; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input[type="text"], input[type="date"], input[type="time"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .col { flex: 1; }
+        .btn-submit { width: 100%; background-color: #2a9d8f; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-submit:hover { background-color: #21867a; }
+        #user-info { display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        #user-info img { width: 35px; height: 35px; border-radius: 50%; }
     </style>
 </head>
 <body>
 
-    <div id="modalLogin" class="janela-conteudo visivel">
-        <div class="janela-corpo">
-            <h2>Acessar a Agenda</h2>
-            <p>Faça login com o Google para sincronizar seus dados entre o computador e o celular.</p>
-            <div class="btn-google-container">
-                <div id="g_id_onload"
-                    data-client_id="884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com"
-                    data-context="signin"
-                    data-ux_mode="popup"
-                    data-callback="handleCredentialResponse"
-                    data-auto_prompt="false">
-                </div>
-                <div class="g_id_signin" data-type="standard" data-shape="rounded" data-theme="outline" data-size="large"></div>
-            </div>
+    <div class="header-container">
+        <h2>📅 Minha Agenda</h2>
+        
+        <div id="auth-area">
+            <div id="buttonDiv"></div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="cabecalho-menu">
-            <div class="cabecalho-esquerda">
-                <h1>Minha Agenda Nuvem</h1>
+    <div class="form-container">
+        <h3>➕ Nova Tarefa</h3>
+        
+        <div class="form-group">
+            <label for="tarefa-nome">O que você precisa fazer?</label>
+            <input type="text" id="tarefa-nome" placeholder="Ex: Reunião com cliente ou Academia">
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="tarefa-tipo">Tipo de Tarefa</label>
+                <select id="tarefa-tipo">
+                    <option>Tarefa Única (Data/Hora específica)</option>
+                    <option>Tarefa Recorrente</option>
+                </select>
             </div>
-            <div class="cabecalho-esquerda" id="areaUsuario">
-                <div class="cabecalho-direita-relogio"><div class="relogio-tempo" id="relogio">00:00:00</div></div>
+            <div class="col">
+                <label for="tarefa-categoria">Categoria (Cor)</label>
+                <select id="tarefa-categoria">
+                    <option>🔵 Padrão (Azul)</option>
+                    <option>🔴 Urgente (Vermelho)</option>
+                    <option>🟢 Trabalho (Verde)</option>
+                </select>
             </div>
         </div>
 
-        <div class="navegador-datas">
-            <button class="btn-seta">◀</button>
-            <p class="data-atual">Agenda Sincronizada</p>
-            <button class="btn-seta">▶</button>
+        <div class="row">
+            <div class="col">
+                <label for="tarefa-data">Data</label>
+                <input type="date" id="tarefa-data" value="2026-05-22">
+            </div>
+            <div class="col">
+                <label for="tarefa-horario">Horário (Opcional)</label>
+                <input type="time" id="tarefa-horario" value="14:00">
+            </div>
         </div>
 
-        <div class="formulario">
-            <h2>Nova Tarefa</h2>
-            <div class="grupo-campo">
-                <label>Título da Tarefa</label>
-                <input type="text" id="txtTarefa" placeholder="Ex: Estudar Banco de Dados">
-            </div>
-            <div class="linha-campos">
-                <div class="grupo-campo">
-                    <label>Horário</label>
-                    <input type="time" id="txtHora">
-                </div>
-                <div class="grupo-campo">
-                    <label>Tipo</label>
-                    <select id="txtTipo">
-                        <option>Pontual</option>
-                        <option>Fixa</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn-adicionar" onclick="adicionarTarefa()">Adicionar e Salvar na Nuvem</button>
-        </div>
-
-        <div class="lista-tarefas" id="containerTarefas"></div>
+        <button type="button" class="btn-submit" onclick="adicionarTarefa()">Adicionar na Agenda</button>
     </div>
 
-    <script>
-        let usuarioLogado = null;
-        let tarefasDoUsuario = [];
-
-        function atualizarRelogio() {
-            const agora = new Date();
-            document.getElementById('relogio').textContent = agora.toLocaleTimeString('pt-BR');
-        }
-        setInterval(atualizarRelogio, 1000);
-
-        // --- INTEGRAÇÃO DO LOGIN COM BANCO DE DADOS ---
-        async function handleCredentialResponse(response) {
-            const perfil = parseJwt(response.credential);
-            usuarioLogado = perfil.email;
-
-            document.getElementById('modalLogin').classList.remove('visivel');
-            
-            const area = document.getElementById('areaUsuario');
-            area.insertAdjacentHTML('afterbegin', `
-                <div class="usuario-perfil">
-                    <img src="${perfil.picture}" referrerpolicy="no-referrer">
-                    <span>Olá, ${perfil.given_name}</span>
-                </div>
-            `);
-
-            await carregarDadosDaNuvem();
-        }
-
-        function parseJwt(token) {
-            var base64Url = token.split('.')[1];
-            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
-        }
-
-        // --- SALVAR E CARREGAR DA NUVEM ---
-        async function carregarDadosDaNuvem() {
-            if (!usuarioLogado) return;
-            try {
-                const docRef = window.dbNode.doc(window.dbNode.db, "agendas", usuarioLogado);
-                const docSnap = await window.dbNode.getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    tarefasDoUsuario = docSnap.data().tarefas || [];
-                } else {
-                    const localBackup = localStorage.getItem(`backup_${usuarioLogado}`);
-                    tarefasDoUsuario = localBackup ? JSON.parse(localBackup) : [];
-                }
-            } catch (e) {
-                const localBackup = localStorage.getItem(`backup_${usuarioLogado}`);
-                tarefasDoUsuario = localBackup ? JSON.parse(localBackup) : [];
-            }
-            renderizarTarefas();
-        }
-
-        async function salvarDadosNaNuvem() {
-            if (!usuarioLogado) return;
-            localStorage.setItem(`backup_${usuarioLogado}`, JSON.stringify(tarefasDoUsuario));
-
-            try {
-                const docRef = window.dbNode.doc(window.dbNode.db, "agendas", usuarioLogado);
-                await window.dbNode.setDoc(docRef, { tarefas: tarefasDoUsuario });
-            } catch (e) {
-                console.log("Erro ao salvar, dados guardados em cache local...");
-            }
-        }
-
-        function adicionarTarefa() {
-            const titulo = document.getElementById('txtTarefa').value;
-            const hora = document.getElementById('txtHora').value;
-            const tipo = document.getElementById('txtTipo').value;
-
-            if (!titulo || !hora) {
-                alert("Por favor, preencha todos os campos!");
-                return;
-            }
-
-            const nova = { id: Date.now(), titulo, hora, tipo };
-            tarefasDoUsuario.push(nova);
-            document.getElementById('txtTarefa').value = "";
-            
-            renderizarTarefas();
-            salvarDadosNaNuvem();
-        }
-
-        function excluirTarefa(id) {
-            tarefasDoUsuario = tarefasDoUsuario.filter(t => t.id !== id);
-            renderizarTarefas();
-            salvarDadosNaNuvem();
-        }
-
-        function renderizarTarefas() {
-            const container = document.getElementById('containerTarefas');
-            container.innerHTML = "";
-
-            if (tarefasDoUsuario.length === 0) {
-                container.innerHTML = `<p style="color:#a0aec0; text-align:center;">Nenhuma tarefa agendada.</p>`;
-                return;
-            }
-
-            tarefasDoUsuario.forEach(t => {
-                container.innerHTML += `
-                    <div class="tarefa-card">
-                        <div>
-                            <strong style="font-size:1.1rem; display:block;">${t.titulo}</strong>
-                            <small style="color:#718096;">${t.hora} - ${t.tipo}</small>
-                        </div>
-                        <div class="acoes-tarefa">
-                            <button class="btn-excluir" onclick="excluirTarefa(${t.id})">Excluir</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
