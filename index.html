@@ -133,6 +133,61 @@
 
     <div class="no-tasks">Nenhuma tarefa marcada para este dia.</div>
 
-    <script src="script.js"></script>
+    <script>
+        window.addEventListener('load', function () {
+            startClock();
+
+            // ⚠️ ADICIONE SEU CLIENT ID DO GOOGLE CLOUD ENTRE AS ASPAS ABAIXO
+            google.accounts.id.initialize({
+                client_id: "SUAS_CREDENCIAIS_AQUI.apps.googleusercontent.com", 
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { 
+                    theme: "outline", 
+                    size: "medium", 
+                    text: "signin_with",
+                    shape: "rectangular"
+                }
+            );
+        });
+
+        function handleCredentialResponse(response) {
+            const dataBase64 = response.credential.split('.')[1];
+            const jsonString = window.atob(dataBase64);
+            const usuario = JSON.parse(jsonString);
+
+            const authContainer = document.getElementById("google-auth-container");
+            authContainer.innerHTML = `
+                <div id="user-logged">
+                    <img src="${usuario.picture}" alt="Avatar">
+                    <span>Olá, ${usuario.given_name}!</span>
+                </div>
+            `;
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                const timeString = now.toTimeString().split(' ')[0];
+                const clockElement = document.getElementById('live-clock');
+                if (clockElement) {
+                    clockElement.textContent = timeString;
+                }
+            }, 1000);
+        }
+
+        function salvarTarefa() {
+            const taskName = document.getElementById('task-name').value;
+            if (!taskName) {
+                alert("Por favor, preencha o nome da sua tarefa!");
+                return;
+            }
+            alert(`Tarefa "${taskName}" salva com sucesso!`);
+            document.getElementById('task-name').value = "";
+        }
+    </script>
 </body>
 </html>
