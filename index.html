@@ -13,16 +13,20 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px; color: #333; }
         
-        /* Cabeçalho */
+        /* Cabeçalho Ajustado */
         .header-main { display: flex; justify-content: space-between; align-items: center; background-color: #fff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .menu-btn { background-color: #34495e; color: white; border: none; padding: 10px 12px; border-radius: 6px; font-size: 18px; cursor: pointer; }
-        .title-area { display: flex; flex-direction: column; gap: 5px; }
+        
+        /* Garantindo largura para a área do título e do botão */
+        .title-area { display: flex; flex-direction: column; gap: 8px; min-width: 250px; }
         .title-area h1 { font-size: 24px; color: #34495e; }
         
-        /* Área do Botão do Google */
-        #google-auth-container { margin-top: 5px; min-height: 40px; }
-        #user-logged { display: flex; align-items: center; gap: 10px; font-weight: bold; background: #e8f5e9; padding: 5px 12px; border-radius: 20px; color: #2e7d32; font-size: 14px; }
+        /* ESPAÇO FORÇADO PARA O BOTÃO NÃO FICAR CHATO/ESMAGADO */
+        #google-auth-container { margin-top: 5px; min-height: 40px; display: block; width: 100%; min-width: 200px; }
+        #buttonDiv { display: block; min-height: 40px; }
+
+        #user-logged { display: flex; align-items: center; gap: 10px; font-weight: bold; background: #e8f5e9; padding: 5px 12px; border-radius: 20px; color: #2e7d32; font-size: 14px; width: fit-content; }
         #user-logged img { width: 28px; height: 28px; border-radius: 50%; }
 
         /* Relógio Digital */
@@ -132,8 +136,8 @@
     <div class="no-tasks">Nenhuma tarefa marcada para este dia.</div>
 
     <script>
-        // Função de inicialização do Google estruturada com segurança máxima
         function iniciarGoogleAuth() {
+            // Verifica se a API global do Google está pronta na memória
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
                     client_id: "884588851940-hu3aqqoc1ciibip94o8r5kn1snraahom.apps.googleusercontent.com", 
@@ -146,19 +150,19 @@
                         targetDiv,
                         { 
                             theme: "outline", 
-                            size: "medium", 
+                            size: "large", // Mudado para grande para melhor clique e destaque
                             text: "signin_with",
                             shape: "rectangular"
                         }
                     );
                 }
             } else {
-                // Se a biblioteca demorar um pouquinho a carregar, tenta de novo em 300ms
-                setTimeout(iniciarGoogleAuth, 300);
+                // Tenta novamente em um intervalo curto caso a rede demore para puxar o script do Google
+                setTimeout(iniciarGoogleAuth, 200);
             }
         }
 
-        // Aguarda a árvore HTML estar 100% montada na tela antes de rodar os scripts
+        // Garante a execução apenas pós-renderização estrutural do HTML
         document.addEventListener('DOMContentLoaded', function () {
             startClock();
             iniciarGoogleAuth();
